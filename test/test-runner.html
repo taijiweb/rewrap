@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+    <base href="../">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rewrap test runner</title>
+    <link rel="stylesheet" href="public/app.css">
+    <link rel="stylesheet" href="bower_components/mocha/mocha.css">
+    <link rel="stylesheet" href="test/mocha-test.css">
+    <style>
+        body {
+            overflow:scroll;
+        }
+    </style>
+</head>
+<body>
+
+<script src="bower_components/chai/chai.js"></script>
+
+<!--just for test buttons -->
+<div id="clear-demo" onclick="clearDemo()"> clear demo</div>
+<div id="clear-log" onclick="clearLog()"> clear log</div>
+<div id="debug-log"></div>
+
+<div id="mocha"></div>
+
+<div id="demo" class="demo"></div>
+<div id="demo2" class="demo2"></div>
+
+<script src="bower_components/mocha/mocha.js"></script>
+<script>mocha.setup('bdd')</script>
+<script src="http://localhost:8100/webpack-dev-server.js"></script>
+<script src="http://localhost:8100/assets/mocha-index.js"></script>
+
+<script>
+   mocha.run();
+
+    var elm = document.getElementById('demo');
+
+    function clearLog() {
+        document.getElementById('debug-log').innerHTML = '';
+    }
+    function clearDemo() {
+        document.getElementById('demo').innerHTML = '';
+    }
+
+</script>
+
+</body>
+</html>

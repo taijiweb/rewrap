@@ -1,0 +1,40 @@
+{
+  "name": "rewrap",
+  "version": "0.0.1",
+  "description": "a tool for better regexp",
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://raw.github.com/taijiweb/rewrap/master/LICENSE"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/taijiweb/rewrap.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-modern-browsers": "^5.1.0",
+    "bdd-test-helper": "latest",
+    "chai": "~1.9.1",
+    "del": "^2.0.2",
+    "gulp": "~3.9.0",
+    "gulp-copy": "0.0.2",
+    "gulp-mocha": "^1.1.2",
+    "gulp-task-helper": "latest",
+    "minimist": "^3.0.2",
+    "run-sequence": "~1.0.2",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.15.2"
+  },
+  "engines": {
+    "node": ">=6.5.0"
+  },
+  "scripts": {
+    "test": "gulp test"
+  }
+}
