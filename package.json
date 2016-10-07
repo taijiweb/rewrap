@@ -1,6 +1,6 @@
 {
   "name": "rewrap",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "a tool for better regexp",
   "license": "MIT",
   "licenses": [
@@ -16,8 +16,10 @@
   "dependencies": {
   },
   "devDependencies": {
+    "regexp-frequent": "*",
     "babel-core": "^6.14.0",
     "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.14.0",
     "babel-preset-modern-browsers": "^5.1.0",
     "bdd-test-helper": "latest",
     "chai": "~1.9.1",
@@ -32,7 +34,7 @@
     "webpack-dev-server": "^1.15.2"
   },
   "engines": {
-    "node": ">=6.5.0"
+    "node": ">=4.5.0"
   },
   "scripts": {
     "test": "gulp test"

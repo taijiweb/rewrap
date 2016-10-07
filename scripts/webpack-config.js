@@ -7,6 +7,10 @@ const makeConfig = exports.makeConfig = function(entry, filename, options, makin
 
     const plugins = options.plugins || [new webpack.NoErrorsPlugin()];
 
+    let presets = ['modern-browsers'];
+    if (filename.match(/\.min\.js/) ){
+        presets = ['es2015'];
+    }
     const config = {
         entry: entry,
         output: {
@@ -31,13 +35,13 @@ const makeConfig = exports.makeConfig = function(entry, filename, options, makin
             loaders: [
                 {
                     test: /\.js$/,
-                    include: [path.resolve(__dirname, '../test'), path.resolve(__dirname, '../src'), path.resolve(__dirname, '../demo')],
+                    include: [path.resolve(__dirname, '../test'), path.resolve(__dirname, '../lib'), path.resolve(__dirname, '../demo')],
                     exclude: [
                         path.resolve(__dirname, "node_modules")
                     ],
                     loader: 'babel',
                     query: {
-                        presets: ['modern-browsers']
+                        presets: presets
                     }
                 }
             ],

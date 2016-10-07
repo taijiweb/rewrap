@@ -15,7 +15,7 @@ const onTaskDone = function() {
 };
 
 const rewrapEntry = {
-    'rewrap': './lib/rewrap'
+    'rewrap': './lib/index'
 };
 
 const runWebPack = function(entry, filename, options) {
