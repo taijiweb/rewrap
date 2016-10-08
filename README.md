@@ -23,6 +23,8 @@ dist/rewrap.js and dist/rewrap.min.js can be used in the browser
 
     const {re, wrap} = rewrap; // wrap is the same as rewrap;
 
+    // This npm package contains some frequently used regexp.
+    // It can be used as the registry for rewrap.
     const reBuiltins = require('regexp-frequent');
     rewrap.registry(reBuiltins);
 
@@ -80,24 +82,34 @@ dist/rewrap.js and dist/rewrap.min.js can be used in the browser
 
 ### register, ref, @path%
 
-register(registry)  
-register(path, value)  
-register(path)  
+someRewrap.register(registry)
+someRewrap.register(refPath, value)
+someRewrap.register(refPath): value is someRewrap itself
+someRewrap.register({refPath:value, ...}): register multiple refPath:value pairs
 
-ref(path): same as /@path%/  
+someRewrap.ref(refPath): use the predefined rewrap in the registry(someRewrap._registry)
+someRewrap.and(/@refPath%/): use the predefined rewrap in the registry(someRewrap._registry)
+
+refPath is like x, y, a.b.c, _a, a0.b1._c
 % can be omit if the following char is not identifier chars [_A-Za-z0-9]
+NB. $ is not allowed in the refPath or dataPath(see below).
 
-### save, &path%
-someRewrap.save(path): same as /@someRewrap&path%/  
-% can be omit if the following char is not identifier chars [_A-Za-z0-9]  
+### save, &dataPath%
+someRewrap.save(dataPath): same as /@someRewrap&dataPath%/
+dataPath is like x, y, a.b.c, _a, a0.b1._c
+% can be omit if the following char is not identifier chars [_A-Za-z0-9]
 If necessary, () will be added around someRewrap to generate a sub match.
 
 ### options method
   flags, registry
 
 ### switch source style
-someRewrap.re: lead the regexp style chain  
+someRewrap.re: lead the regexp style chain. In regexp style, @refPath%
+
 someRewrap.wrap: lead the rewrap style chain
+
+### regexp-frequent
+This npm package contains some frequently used regexp. It can be used as the registry for rewrap.
 
 Please dive into the code for more information. The code is simple and intuitive.
 
