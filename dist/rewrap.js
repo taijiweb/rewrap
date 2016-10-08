@@ -49,7 +49,7 @@
 
 	'use strict';
 
-	var rewrap = exports = module.exports = function rewrap(source, sourceStyle = 'wrap', flags = '', registry = rewrap._registry) {
+	var rewrap = exports = module.exports = function rewrap(source, sourceStyle = 'wrap', flags = null, registry = rewrap._registry) {
 	    return new Rewrap(source, sourceStyle, flags, registry);
 	};
 
@@ -57,23 +57,23 @@
 
 	var Rewrap = exports.Rewrap = __webpack_require__(/*! ./Rewrap */ 3);
 
-	var re = exports.re = function rewrap(source, flags = '', registry = re._registry) {
+	var re = exports.re = function rewrap(source, flags = null, registry = wrap._registry) {
 	    return new Rewrap(source, 're', flags, registry);
 	};
 
 	var wrap = exports.wrap = rewrap;
 
-	re.or = (...items) => new Rewrap(or(items, 're', ''));
-	re.and = (...items) => new Rewrap(and(items, 're', ''));
-	re.paren = (item, left = '(:') => new Rewrap(paren(item, left, 're', ''));
-	re.not = item => new Rewrap(item, 're', '').not();
-	re.lookAhead = item => new Rewrap(item, 're', '').lookAhead();
-	re.optional = item => new Rewrap(item, 're', '').optional();
-	re.any = item => new Rewrap(item, 're', '').any();
-	re.some = item => new Rewrap(item, 're', '').some();
-	re.repeat = (min, max) => new Rewrap(item, 're', '').repeat(min, max);
-	re.times = count => new Rewrap(item, 're', '').times(count);
-	re.timesMore = count => new Rewrap(item, 're', '').timesMore(count);
+	re.or = (...items) => new Rewrap(or(items, 're', '', wrap._registry));
+	re.and = (...items) => new Rewrap(and(items, 're', '', wrap._registry));
+	re.paren = (item, left = '(:') => new Rewrap(paren(item, left, 're', '', wrap._registry));
+	re.not = item => new Rewrap(item, 're', '', wrap._registry).not();
+	re.lookAhead = item => new Rewrap(item, 're', '', wrap._registry).lookAhead();
+	re.optional = item => new Rewrap(item, 're', '', wrap._registry).optional();
+	re.any = item => new Rewrap(item, 're', '', wrap._registry).any();
+	re.some = item => new Rewrap(item, 're', '', wrap._registry).some();
+	re.repeat = (min, max) => new Rewrap(item, 're', '', wrap._registry).repeat(min, max);
+	re.times = count => new Rewrap(item, 're', '', wrap._registry).times(count);
+	re.timesMore = count => new Rewrap(item, 're', '', wrap._registry).timesMore(count);
 
 	wrap.registry = registry => (wrap._registry = registry, wrap);
 	wrap.or = (...items) => new Rewrap(or(items, 'wrap', '', wrap._registry));
@@ -108,7 +108,7 @@
 	    if (!items.length) return '';else if (items.length === 1) return parse(items[0], 0, null, style, flags, registry);
 
 	    var branches = [],
-	        result = {},
+	        result = { _sourceStyle: style, _flags: flags, _registry: registry },
 	        regexpSources = [],
 	        rewrapSources = [],
 	        matchTotal = 0,
@@ -135,13 +135,15 @@
 	    result.matchIndex2datapath = matchIndex2datapath;
 	    result.needParen = true;
 	    result.needGroup = true;
+	    result.isOr = true;
+	    result._flags = result._flags || '';
 	    return result;
 	};
 
 	var and = exports.and = (items, style, flags, registry) => {
 	    if (!items.length) return '';else if (items.length === 1) return parse(items[0], 0, null, style, flags, registry);
 
-	    var result = {},
+	    var result = { _sourceStyle: style, _flags: flags, _registry: registry },
 	        regexpSources = [],
 	        rewrapSources = [],
 	        matchTotal = 0,
@@ -150,8 +152,8 @@
 	    for (var item of items) {
 	        var itemResult = parse(item, 0, null, style, flags, registry);
 	        if (itemResult.isOr) {
-	            itemResult._regexpSource = '(:' + itemResult._regexpSource + ')';
-	            itemResult._rewrapSource = '(:' + itemResult._rewrapSource + ')';
+	            itemResult._regexpSource = '(?:' + itemResult._regexpSource + ')';
+	            itemResult._rewrapSource = '(?:' + itemResult._rewrapSource + ')';
 	        }
 	        regexpSources.push(itemResult._regexpSource);
 	        rewrapSources.push(itemResult._rewrapSource);
@@ -169,10 +171,11 @@
 	    result.matchIndex2dataPath = matchIndex2dataPath;
 	    result.needParen = true;
 	    result.needGroup = true;
+	    result._flags = result._flags || '';
 	    return result;
 	};
 
-	// add ( ... ), (: ... ), (?= ... ) or (?! ... )
+	// add ( ... ), (?: ... ), (?= ... ) or (?! ... )
 	// not include  [ ... ], which is different totally
 	exports.paren = (item, left, style, flags, registry) => {
 	    "use strict";
@@ -185,28 +188,31 @@
 	        parseResult._regexpSource = left + parseResult._regexpSource + right;
 	        parseResult._rewrapSource = left + parseResult._rewrapSource + right;
 	        parseResult.patternTotal = parseResult.patternTotal + 1;
-	        parseResult.matchIndex2dataPath = addMatchIndex(parseResult.matchIndex2dataPath);
+	        parseResult.matchIndex2dataPath = addIndexMap(parseResult.matchIndex2dataPath);
 	        parseResult.needParen = false;
 	        parseResult.needGroup = false;
-	    } else if (left === '(:' && parseResult.needGroup) {
+	    } else if (left === '(?:' && parseResult.needGroup) {
 	        parseResult._regexpSource = left + parseResult._regexpSource + right;
 	        parseResult._rewrapSource = left + parseResult._rewrapSource + right;
 	        parseResult.needGroup = false;
-	    } else if (left !== '(:') {
+	    } else if (left !== '(?:') {
 	        parseResult._regexpSource = left + parseResult._regexpSource + right;
 	        parseResult._rewrapSource = left + parseResult._rewrapSource + right;
 	        parseResult.needGroup = false;
 	    }
+
+	    parseResult._flags = parseResult._flags || '';
 
 	    return parseResult;
 	};
 
 	var parse = exports.parse = (source, index, stopChar, style, flags, registry) => {
 
-	    if (source._rewrapSource) return source;else if (Object.prototype.toString.call(source) === '[object Array]') {
+	    if (source._rewrapSource != null) return source;else if (Object.prototype.toString.call(source) === '[object Array]') {
 	        return and(source, 'wrap', flags, registry);
 	    }
 
+	    var sourceFlags = source.flags;
 	    source = source.source || source;
 	    var start = index;
 
@@ -243,7 +249,7 @@
 	    result.stopIndex = index;
 	    result._regexpSource = regexpSources.join('|');
 	    if (style === 're') {
-	        result._rewrapSource = convertToRewrapSource(source);
+	        result._rewrapSource = convertToRewrapSource(source.slice(start, index));
 	    } else {
 	        result._rewrapSource = source.slice(start, index);
 	    }
@@ -253,6 +259,7 @@
 	    result.isOr = branchCount > 1;
 	    result.needParen = branchCount > 1 || branch && branch.needParen;
 	    result.needGroup = branchCount > 1 || branch && branch.needGroup;
+	    result._flags = flags != null && flags || sourceFlags || '';
 	    return result;
 	};
 
@@ -262,7 +269,8 @@
 	    var result = {},
 	        regexpSources = [],
 	        matchTotal = 0,
-	        matchIndex2dataPath = {};
+	        matchIndex2dataPath = {},
+	        start = index;
 
 	    var char = source[index];
 	    var segment = void 0,
@@ -282,6 +290,11 @@
 	    }
 	    result.stopIndex = index;
 	    result._regexpSource = regexpSources.join('');
+	    if (style === 're') {
+	        result._rewrapSource = convertToRewrapSource(source.slice(start, index));
+	    } else {
+	        result._rewrapSource = source.slice(start, index);
+	    }
 	    result.matchTotal = matchTotal;
 	    result.matchIndex2dataPath = matchIndex2dataPath;
 	    result.needParen = segmentCount > 1 || segment && segment.needParen;
@@ -350,10 +363,8 @@
 	    var repeatStop = index;
 	    var repeatSpan = source.slice(repeatStart, repeatStop);
 
-	    if (style === 're') {
-	        regexpSource = source;
-	    } else {
-	        regexpSource += repeatSpan;
+	    regexpSource += repeatSpan;
+	    if (style !== 're') {
 	        i = parseDataName(source, index, style);
 	        if (i) {
 	            if (needParen || repeatSpan) {
@@ -419,8 +430,6 @@
 	                index++;
 	                head += char;
 	            }
-	        } else if (char === ':') {
-	            head = '(:';
 	        } else {
 	            head = '(';
 	        }
@@ -607,7 +616,7 @@
 	            if (!isEscaping(source, i)) {
 	                result += '\\' + char;
 	            }
-	        }
+	        } else result += char;
 	        i++;
 	        char = source[i];
 	    }
@@ -674,12 +683,13 @@
 
 	    var registry = this._registry || (this._registry = {});
 
-	    if (arguments.length === 1) {
+	    if (typeof path !== 'string') {
 
 	        for (var key in path) {
 	            setValueByPath(registry, key, path[key], false);
 	        }
 	    } else {
+	        if (value == null) value = this;
 	        setValueByPath(registry, path, value || this, false);
 	    }
 
@@ -697,7 +707,7 @@
 
 	var { assign } = Object;
 
-	var { or, and, paren, parse, addMatchIndex } = __webpack_require__(/*! ./util */ 1);
+	var { or, and, paren, parse, addIndexMap } = __webpack_require__(/*! ./util */ 1);
 
 	var { setValueByPath, register } = __webpack_require__(/*! ./path-value */ 2);
 
@@ -707,7 +717,8 @@
 
 	    constructor(source, sourceStyle, flags, registry) {
 	        assign(this, parse(source, 0, null, sourceStyle, flags, registry));
-	        this._regexp = new RegExp(this._regexpSource, flags);
+	        this._flags = this._flags || '';
+	        this._regexp = new RegExp(this._regexpSource, this._flags);
 	        this.addSwitch();
 	    }
 
@@ -792,6 +803,7 @@
 	        }
 
 	        result.$$rewrapData = data;
+	        return data;
 	    }
 
 	    addSwitch() {
@@ -875,7 +887,7 @@
 	        var result = void 0;
 	        if (this.needParen) {
 	            result = this.parenMe('(');
-	            result.matchIndex2dataPath = addMatchIndex(result.matchIndex2dataPath, path);
+	            result.matchIndex2dataPath = addIndexMap(result.matchIndex2dataPath, path);
 	        } else {
 	            result = this.copy();
 	            result.matchIndex2dataPath[0] = path;
@@ -899,7 +911,7 @@
 	            items.unshift(this);
 	        }
 
-	        var parseResult = or(items, this.style, this._flags, this._retistry);
+	        var parseResult = or(items, this._sourceStyle, this._flags, this._registry);
 	        return new Rewrap(parseResult);
 	    }
 
@@ -907,15 +919,15 @@
 	        if (!items.length) return this;
 
 	        items.unshift(this);
-	        var parseResult = and(items, this.style, this._flags, this._retistry);
+	        var parseResult = and(items, this._sourceStyle, this._flags, this._registry);
 	        return new Rewrap(parseResult);
 	    }
 
-	    paren(item, left = '(:') {
+	    paren(item, left = '(?:') {
 	        return this.and(new Rewrap(paren(item, left)));
 	    }
 
-	    parenMe(left = '(:') {
+	    parenMe(left = '(?:') {
 	        return new Rewrap(paren(this, left));
 	    }
 
