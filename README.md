@@ -91,7 +91,7 @@ someRewrap.ref(refPath): use the predefined rewrap in the registry(someRewrap._r
 someRewrap.and(/@refPath%/): use the predefined rewrap in the registry(someRewrap._registry)
 
 refPath is like x, y, a.b.c, _a, a0.b1._c
-% can be omit if the following char is not identifier chars [_A-Za-z0-9]
+% can be omit if the following char is not identifier chars [_A-Za-z0-9]  
 NB. $ is not allowed in the refPath or dataPath(see below).
 
 ### save, &dataPath%
