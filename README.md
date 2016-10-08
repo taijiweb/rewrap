@@ -108,10 +108,22 @@ someRewrap.re: lead the regexp style chain. In regexp style, @refPath%
 
 someRewrap.wrap: lead the rewrap style chain
 
-### regexp-frequent
-This npm package contains some frequently used regexp. It can be used as the registry for rewrap.
+## show me the code
 
-Please dive into the code for more information. The code is simple and intuitive.
+> Please dive into the code for more information. The code is simple and intuitive.
+
+## two npm packages work with rewrap
+### regexp-frequent
+The npm package [regexp-frequent](https://github.com/taijiweb/regexp-frequent) contains some frequently used regexp. It can be used as the registry for rewrap.
+
+### rewrap-patch
+The npm package [rewrap-patch](https://github.com/taijiweb/rewrap-patch) does monkey patch on String.prototype, make the methods(match, search, split, replace) works better with rewrap. Most of time you do NOT need rewrap-patch, except that you need the match method support someString.match(aRewrap, data).
+
+## similar npm packages
+These two npm packages have similar part fearture with rewrap: save sub match with name. But rewrap is more convenient and powerful than them(no parens is necessary for name, and dot separated path is supported):  
+[named-regexp:  https://www.npmjs.com/package/named-regexp](https://www.npmjs.com/package/named-regexp)  
+[named-js-regexp:  https://www.npmjs.com/package/named-js-regexp](https://www.npmjs.com/package/named-regexp)  
+
 
 ## LICENSE
 MIT, see [LICENSE](https://github.com/taijiweb/rewrap/blob/master/LICENSE)
