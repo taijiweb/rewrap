@@ -104,9 +104,9 @@ If necessary, () will be added around someRewrap to generate a sub match.
   flags, registry
 
 ### switch source style
-someRewrap.re: lead the regexp style chain. In regexp style, @refPath%
+someRewrap.re: lead the regexp style chain. In regexp style, @refPath% and @dataPath% will be treated as raw regexp string.
 
-someRewrap.wrap: lead the rewrap style chain
+someRewrap.wrap: lead the rewrap style chain, @refPath% and @dataPath% will be treated like ref(refPath) and save(dataPath).
 
 ## show me the code
 
