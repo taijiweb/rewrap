@@ -92,10 +92,10 @@ someRewrap.and(/@refPath%/): use the predefined rewrap in the registry(someRewra
 
 refPath is like x, y, a.b.c, _a, a0.b1._c
 % can be omit if the following char is not identifier chars [_A-Za-z0-9]  
-NB. $ is not allowed in the refPath or dataPath(see below).  
+NB. $ is not allowed in the refPath or dataPath.
 
 ### save, &dataPath%
-someRewrap.save(dataPath): same as /@someRewrap&dataPath%/  
+someRewrap.save(dataPath): similar to /@someRewrap&dataPath%/
 dataPath is like x, y, a.b.c, _a, a0.b1._c  
 % can be omit if the following char is not identifier chars [_A-Za-z0-9]  
 If necessary, () will be added around someRewrap to generate a sub match.
@@ -111,6 +111,7 @@ someRewrap.wrap: lead the rewrap style chain, @refPath% and @dataPath% will be t
 ## show me the code
 
 > Please dive into the code for more information. The code is simple and intuitive.
+> Look the tests for more examples.
 
 ## two npm packages work with rewrap
 ### regexp-frequent
@@ -122,7 +123,7 @@ The npm package [rewrap-patch](https://github.com/taijiweb/rewrap-patch) does mo
 ## similar npm packages
 These two npm packages have similar part fearture with rewrap: save sub match with name. But rewrap is more convenient and powerful than them(no parens is necessary for name, and dot separated path is supported):  
 [named-regexp:  https://www.npmjs.com/package/named-regexp](https://www.npmjs.com/package/named-regexp)  
-[named-js-regexp:  https://www.npmjs.com/package/named-js-regexp](https://www.npmjs.com/package/named-regexp)  
+[named-js-regexp:  https://www.npmjs.com/package/named-js-regexp](https://www.npmjs.com/package/named-js-regexp)
 
 
 ## LICENSE
